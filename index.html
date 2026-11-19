@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05080f">
+  <meta name="color-scheme" content="dark">
+  <title>У тебя есть звезда — для Амалечки</title>
+  <meta name="description" content="Личное небо, звезда с твоим именем, семь причин и письмо, которое всегда с тобой. Подарок для Амалечки от Даврона.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="У тебя есть звезда">
+  <meta property="og:description" content="Личное небо, звезда с твоим именем и письмо, которое всегда с тобой.">
+  <meta property="og:image" content="assets/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="У тебя есть звезда">
+  <meta name="twitter:description" content="Личное небо для Амалечки.">
+  <meta name="twitter:image" content="assets/og.jpg">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/cormorant.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/cormorant-italic.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-semibold.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/caveat.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <noscript>
+    <style>
+      .intro { display: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .sky, .cursor-glow { display: none; }
+      .wallpaper-fallback p { font-size: 11px; letter-spacing: .08em; text-transform: none; }
+    </style>
+  </noscript>
+  <script>
+    try {
+      var entered = localStorage.getItem('zvezda-entered');
+      if (entered || /(?:\?|&)skipintro\b/.test(location.search)) {
+        document.documentElement.classList.add('entered');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержанию</a>
+
+  <canvas class="sky" id="sky" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <div class="page-progress" id="pageProgress" aria-hidden="true"><span></span></div>
+  <script>
+    document.addEventListener("contextmenu", (event) => {
+      const protectedImage = event.target.closest && event.target.closest("[data-photo-protected], #assetDialogBody img");
+      if (protectedImage) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    });
+    document.addEventListener("dragstart", (event) => {
+      const protectedImage = event.target.closest && event.target.closest("[data-photo-protected], #assetDialogBody img");
+      if (protectedImage) event.preventDefault();
+    });
+  </script>
+
+  <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+    <div class="intro__sky" aria-hidden="true"></div>
+    <div class="intro__inner">
+      <div class="mark mark--large" aria-hidden="true">
+        <svg viewBox="0 0 64 64"><path d="M32 5l4.8 22.2L59 32l-22.2 4.8L32 59l-4.8-22.2L5 32l22.2-4.8z" fill="currentColor"/></svg>
+      </div>
+      <p class="kicker" data-bind-template="ПОДАРОК ДЛЯ {herGenitiveUpper}">ПОДАРОК ДЛЯ АМАЛЕЧКИ</p>
+      <h1 class="intro__title" id="introTitle">Это не сайт.<br><em>Это небо.</em></h1>
+      <p class="intro__text">Одна звезда с твоим именем. Семь причин. Одно письмо. И всё это — тебе.</p>
+      <div class="intro__actions">
+        <button class="btn btn--gold" type="button" data-enter="sound">
+          <span>Войти со звуком</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn btn--ghost" type="button" data-enter="silent">Без звука</button>
+      </div>
+      <p class="intro__note">лучше в наушниках · здесь тихо</p>
+    </div>
+    <div class="intro__foot">
+      <span>AMA-01 · LYRA</span>
+      <span data-bind-template="для {herGenitive}, с любовью">для Амалечки, с любовью</span>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="#top" aria-label="Для Амалечки — в начало">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64"><path d="M32 5l4.8 22.2L59 32l-22.2 4.8L32 59l-4.8-22.2L5 32l22.2-4.8z" fill="currentColor"/></svg>
+      </span>
+      <span class="brand__text" data-bind-template="ДЛЯ {herGenitiveUpper}">ДЛЯ АМАЛЕЧКИ</span>
+    </a>
+    <span class="header__chapter" id="chapterNow">ЛИЧНОЕ НЕБО</span>
+    <div class="header__actions">
+      <button class="sound" id="soundToggle" type="button" aria-pressed="false" aria-label="Включить звук">
+        <span class="sound__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="sound__label">звук</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="heroTitle">
+      <div class="hero__inner">
+        <div class="hero__copy">
+          <p class="eyebrow reveal" data-bind-template="ЛИЧНОЕ НЕБО · ДЛЯ {herGenitiveUpper}">ЛИЧНОЕ НЕБО · ДЛЯ АМАЛЕЧКИ</p>
+          <h1 class="hero__title reveal" id="heroTitle">У тебя есть <em>звезда.</em></h1>
+          <p class="hero__lead reveal">Настоящая. Я назвал её твоим именем и записал в каталог. Теперь у нас есть своё небо — даже когда мы не рядом.</p>
+          <div class="hero__dedication reveal">
+            <span class="hero__heart" aria-hidden="true">♡</span>
+            <p>
+              <small data-bind-template="ОТ {himGenitiveUpper} · {herDativeUpper}">ОТ ДАВРОНА · АМАЛЕЧКЕ</small>
+              <strong>Самой красивой девочке — самая красивая звезда.</strong>
+            </p>
+          </div>
+          <div class="hero__actions reveal">
+            <a class="btn btn--gold" href="#certificate">
+              <span>Смотреть на небо</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M6 14l6 6 6-6"/></svg>
+            </a>
+            <span class="hero__note">лучше со звуком · наушники приветствуются</span>
+          </div>
+        </div>
+
+        <div class="moon-stage reveal" id="moonStage">
+          <div class="moon-stage__glow"></div>
+          <div class="orbit orbit--one"></div>
+          <div class="orbit orbit--two"></div>
+          <img class="moon" src="assets/moon.webp" alt="" width="1200" height="1200" draggable="false">
+          <span class="moon-label moon-label--a"><i></i>AMA-01</span>
+          <span class="moon-label moon-label--b">VEGA · α LYRAE</span>
+          <span class="moon-label moon-label--c">25 СВ. ЛЕТ</span>
+          <span class="spark spark--a">+</span>
+          <span class="spark spark--b">+</span>
+          <button class="moon-stage__action" id="wishButton" type="button" aria-label="Коснуться неба и загадать желание"></button>
+          <span class="moon-stage__hint">коснись неба, чтобы загадать желание</span>
+          <span class="moon-stage__wish" id="wishMessage" aria-live="polite">Я тоже загадал. Тебя — во всех моих завтра.</span>
+        </div>
+      </div>
+
+      <div class="hero__meta">
+        <span>RA 18h 36m 56s · DEC +38° 47′ 01″</span>
+        <a class="scroll-cue" href="#certificate"><span>листай медленно</span><i aria-hidden="true"></i></a>
+        <span>AMA-01 / LYRA</span>
+      </div>
+    </section>
+
+    <section class="section section--certificate" id="certificate" aria-labelledby="certificateTitle">
+      <div class="section__inner">
+        <div class="section-head">
+          <p class="chapter reveal"><span>01</span> / СВИДЕТЕЛЬСТВО</p>
+          <h2 class="reveal" id="certificateTitle">Одна звезда.<br><em>Навсегда твоя.</em></h2>
+          <p class="lead reveal">Это Вега — самая яркая звезда в созвездии Лиры. Двадцать пять световых лет от Земли и примерно ноль расстояния до моего сердца.</p>
+        </div>
+
+        <div class="certificate-grid">
+          <div class="certificate-copy">
+            <p class="reveal">Я выбрал её не потому, что она самая большая. А потому, что её видно даже из города, где слишком много света. Как тебя — даже в самый шумный день.</p>
+            <dl class="specs reveal">
+              <div><dt>КАТАЛОГ</dt><dd>AMA-01</dd></div>
+              <div><dt>СОЗВЕЗДИЕ</dt><dd>Лира</dd></div>
+              <div><dt>КООРДИНАТЫ</dt><dd>18h 36m 56s / +38° 47′ 01″</dd></div>
+              <div><dt>СТАТУС</dt><dd>твоя, бессрочно</dd></div>
+            </dl>
+            <div class="actions reveal">
+              <button class="btn btn--gold" type="button" data-download="certificate">
+                <span>Скачать свидетельство</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+              </button>
+              <button class="btn btn--text" type="button" data-open="certificate">Рассмотреть</button>
+              <button class="btn btn--text" type="button" data-print="certificate">Распечатать</button>
+            </div>
+            <p class="fineprint reveal">настоящая звезда. неофициальная, но самая честная.</p>
+          </div>
+
+          <div class="certificate-preview reveal">
+            <div class="cert-card" id="certificateCard">
+              <div class="cert-card__frame">
+                <div class="cert-card__head">
+                  <span>CERTIFICATE OF A STAR</span>
+                  <span data-bind="certificate.catalog">AMA-01</span>
+                </div>
+                <div class="cert-card__body">
+                  <div class="cert-card__copy">
+                    <p class="cert-card__kicker">ЛИЧНОЕ НЕБО · ЛИРА</p>
+                    <h3><span data-bind="certificate.title">Свидетельство</span><br><em data-bind="certificate.titleAccent">о звезде</em></h3>
+                    <p><span data-bind="certificate.lead">Настоящим подтверждается, что звезда</span> <strong data-bind="certificate.catalog">AMA-01</strong> <span data-bind="certificate.inConstellation">в созвездии Лиры</span> <span data-bind="certificate.bearsName">носит имя</span></p>
+                    <p class="cert-card__name" data-bind="her">Амалечка</p>
+                    <p class="cert-card__belongs" data-bind="certificate.belongs">и принадлежит ей одной — во всех возможных вселенных.</p>
+                  </div>
+                  <div class="cert-card__map" aria-hidden="true">
+                    <svg viewBox="0 0 300 300">
+                      <defs>
+                        <radialGradient id="vegaGlow" cx="50%" cy="50%" r="50%">
+                          <stop offset="0" stop-color="#f8e4b5" stop-opacity=".95"/>
+                          <stop offset="1" stop-color="#f8e4b5" stop-opacity="0"/>
+                        </radialGradient>
+                      </defs>
+                      <circle cx="150" cy="150" r="118" fill="none" stroke="currentColor" stroke-opacity=".18"/>
+                      <circle cx="150" cy="150" r="84" fill="none" stroke="currentColor" stroke-opacity=".10"/>
+                      <circle cx="150" cy="150" r="34" fill="none" stroke="currentColor" stroke-opacity=".08"/>
+                      <path d="M150 150V32M150 150L268 150M150 150v118M150 150L32 150" stroke="currentColor" stroke-opacity=".08"/>
+                      <g class="chart-stars" fill="currentColor">
+                        <circle cx="44" cy="76" r="1.2" opacity=".45"/><circle cx="70" cy="212" r="1" opacity=".3"/>
+                        <circle cx="248" cy="92" r="1.1" opacity=".4"/><circle cx="222" cy="238" r="1.4" opacity=".35"/>
+                        <circle cx="118" cy="48" r="1" opacity=".3"/><circle cx="54" cy="156" r="1.3" opacity=".3"/>
+                        <circle cx="262" cy="174" r="1" opacity=".3"/><circle cx="184" cy="262" r="1" opacity=".35"/>
+                        <circle cx="96" cy="118" r="1" opacity=".3"/><circle cx="204" cy="64" r="1.2" opacity=".35"/>
+                      </g>
+                      <g class="lyra-lines" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1">
+                        <path d="M186 62 150 150 104 186 78 122 150 150 196 196 262 170"/>
+                        <path d="M104 186 78 122M196 196 262 170"/>
+                      </g>
+                      <g fill="#f3dcae">
+                        <circle cx="186" cy="62" r="2.3"/><circle cx="104" cy="186" r="1.8"/>
+                        <circle cx="78" cy="122" r="1.7"/><circle cx="196" cy="196" r="1.6"/>
+                        <circle cx="262" cy="170" r="1.5"/>
+                      </g>
+                      <circle cx="150" cy="150" r="34" fill="url(#vegaGlow)"/>
+                      <circle cx="150" cy="150" r="4.6" fill="#f8e4b5"/>
+                      <path d="M150 132v-10M150 168v10M132 150h-10M168 150h10" stroke="#f3dcae" stroke-opacity=".55"/>
+                      <text x="164" y="140" fill="currentColor" font-size="8" letter-spacing="2">VEGA</text>
+                      <text x="164" y="152" fill="currentColor" font-size="6" opacity=".55" letter-spacing="1.6">α LYR</text>
+                    </svg>
+                    <span>LYRA · 18h 36m</span>
+                  </div>
+                </div>
+                <div class="cert-card__meta">
+                  <div><span>RA</span><strong>18h 36m 56s</strong></div>
+                  <div><span>DEC</span><strong>+38° 47′ 01″</strong></div>
+                  <div><span>DISTANCE</span><strong>25 св. лет</strong></div>
+                  <div><span>ISSUED</span><strong data-today-short>19.11.2026</strong></div>
+                </div>
+                <div class="cert-card__foot">
+                  <div class="cert-card__sig"><span data-bind="certificate.signature">Твой Даврон</span><small>подпись</small></div>
+                  <p class="cert-card__legal" data-bind="certificate.noTransfer">Не подлежит переоформлению.<br>Подлежит любви.</p>
+                  <div class="seal seal--mini" aria-hidden="true"><span>Д</span></div>
+                </div>
+              </div>
+            </div>
+            <span class="certificate-preview__caption">AMA-01 · свидетельство о звезде</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--photos" id="photos" aria-labelledby="photosTitle">
+      <div class="section__inner">
+        <div class="photos-head">
+          <p class="chapter reveal"><span>02</span> / МОЙ ЛЮБИМЫЙ ВИД</p>
+          <h2 class="reveal" id="photosTitle">Если бы у красоты<br>было имя, <em>я бы не придумывал новое.</em></h2>
+          <p class="lead reveal">Пять кадров, которые я открываю, когда скучаю. Все — мои любимые.</p>
+        </div>
+
+        <div class="film-wrap reveal">
+          <div class="film" role="list" aria-label="Фотографии Амалечки">
+            <div class="film__head" aria-hidden="true"><span>НАШИ КАДРЫ · 35 MM</span><span>MEMORIES 400</span></div>
+            <div class="film__frames" id="filmFrames"></div>
+            <div class="film__foot" aria-hidden="true"><span>▲ 05</span><span>ПРОЯВЛЕНО С ЛЮБОВЬЮ</span><span>2026</span></div>
+          </div>
+        </div>
+
+        <p class="photos-quote reveal">Самая яркая точка на любой карте — <em>это ты.</em></p>
+      </div>
+    </section>
+
+    <section class="section section--constellation" id="constellation" aria-labelledby="constellationTitle">
+      <div class="section__inner">
+        <div class="constellation-grid">
+          <div class="constellation-copy">
+            <p class="chapter reveal"><span>03</span> / СОЗВЕЗДИЕ</p>
+            <h2 class="reveal" id="constellationTitle">Семь звёзд.<br><em>Семь причин.</em></h2>
+            <p class="lead reveal">Каждая звезда — то, за что я тебя люблю. Нажми на любую. Собери все семь — и небо ответит.</p>
+
+            <div class="star-progress reveal">
+              <span class="star-progress__label">ЗАЖЖЕНО</span>
+              <span class="star-progress__count"><b id="starCount">0</b> / 7</span>
+              <span class="star-progress__dots" id="starDots" aria-hidden="true"></span>
+            </div>
+
+            <div class="star-panel reveal" id="starPanel" aria-live="polite">
+              <p class="star-panel__word" id="starWord">Выбери первую звезду</p>
+              <p class="star-panel__line" id="starLine">Не спеши. Здесь можно остаться подольше.</p>
+            </div>
+
+            <div class="star-chips reveal" id="starChips" role="group" aria-label="Семь звёзд созвездия"></div>
+            <button class="btn btn--text star-reset reveal" id="starReset" type="button" hidden>Собрать заново</button>
+            <p class="star-hint reveal" id="starHint">подсказка: если соскучишься, набери слово, которым я тебя называю.</p>
+          </div>
+
+          <div class="constellation-stage reveal" id="constellationStage">
+            <div class="constellation-stage__glow" aria-hidden="true"></div>
+            <svg class="heart-map" viewBox="0 0 600 560" aria-hidden="true">
+              <path class="heart-map__ghost" id="heartPath" d="M300 500C105 360 55 230 140 145c65-67 145-33 160 30 15-63 95-97 160-30 85 85 35 215-160 355Z"/>
+              <path class="heart-map__progress" id="heartProgress" d="M300 500C105 360 55 230 140 145c65-67 145-33 160 30 15-63 95-97 160-30 85 85 35 215-160 355Z"/>
+            </svg>
+            <div class="stars" id="starButtons"></div>
+            <div class="stage-hint" id="stageHint">нажми на звезду</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--today" id="today" aria-labelledby="todayTitle">
+      <div class="section__inner">
+        <div class="today-grid">
+          <div class="today-copy">
+            <p class="chapter reveal"><span>04</span> / СЕГОДНЯ</p>
+            <h2 class="reveal" id="todayTitle">Небо сегодня.<br><em>Настоящее.</em></h2>
+            <p class="lead reveal">Я проверил: луна над тобой и надо мной — одна и та же. Пусть у нас будет хотя бы одно общее небо, куда можно смотреть одновременно.</p>
+
+            <div class="today-data reveal">
+              <div class="today-data__date">
+                <span id="todayWeekday">четверг</span>
+                <strong id="todayDay">19</strong>
+                <span id="todayMonth">ноября</span>
+              </div>
+              <div class="today-data__phase">
+                <span>ЛУНА СЕЙЧАС</span>
+                <strong id="moonPhaseName">растущая луна</strong>
+                <span id="moonIllumination">освещено 68%</span>
+              </div>
+              <div class="today-data__time">
+                <span>У ТЕБЯ СЕЙЧАС</span>
+                <strong id="localTime">21:47</strong>
+              </div>
+            </div>
+
+            <blockquote class="daily reveal">
+              <span class="daily__label">СЕГОДНЯШНЯЯ ЗАПИСКА</span>
+              <p id="dailyNote">Сегодня я думал о тебе столько раз, что сбился со счёта. И не жалею.</p>
+            </blockquote>
+
+            <div class="actions reveal">
+              <button class="btn btn--gold" type="button" data-download="wallpaper">
+                <span>Сохранить небо на телефон</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+              </button>
+              <button class="btn btn--text" type="button" id="shareWallpaper" hidden>Поделиться</button>
+            </div>
+            <p class="fineprint reveal">открытка новая каждый день. возвращайся.</p>
+          </div>
+
+          <div class="today-visual reveal">
+            <div class="phone">
+              <div class="phone__speaker" aria-hidden="true"></div>
+              <div class="phone__screen">
+                <div class="wallpaper-fallback" id="wallpaperFallback" aria-hidden="true">
+                  <span class="wallpaper-fallback__kicker" data-bind-template="НЕБО ДЛЯ {herGenitiveUpper}">НЕБО ДЛЯ АМАЛЕЧКИ</span>
+                  <div class="wallpaper-fallback__moon"></div>
+                  <p>собираю небо...</p>
+                </div>
+                <img id="wallpaperPreview" alt="Открытка с сегодняшним небом для Амалечки" width="1080" height="1920">
+                <button class="phone__open" type="button" data-open="wallpaper" aria-label="Рассмотреть небо на сегодня"></button>
+              </div>
+              <div class="phone__home" aria-hidden="true"></div>
+            </div>
+            <p class="phone__caption">1080 × 1920 · обои для телефона</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--letter" id="letter" aria-labelledby="letterTitle">
+      <div class="section__inner section__inner--narrow">
+        <p class="chapter chapter--center reveal"><span>05</span> / ПИСЬМО</p>
+        <h2 class="letter-heading reveal" id="letterTitle">Я пытался сказать это коротко.<br><em>Не получилось.</em></h2>
+        <p class="letter-sub reveal">Оно всегда будет здесь. Даже когда я не рядом.</p>
+
+        <div class="envelope reveal" id="envelope">
+          <div class="envelope__shadow" aria-hidden="true"></div>
+          <div class="envelope__hearts" aria-hidden="true"><i>♡</i><i>✦</i><i>♡</i></div>
+          <div class="envelope__paper">
+            <div class="envelope__top">
+              <span data-bind-template="ЛИЧНОЕ · ДЛЯ {herGenitiveUpper}">ЛИЧНОЕ · ДЛЯ АМАЛЕЧКИ</span>
+              <span>AMA-01</span>
+            </div>
+            <p class="envelope__to" data-bind="herDative">Амалечке</p>
+            <p class="envelope__from">от того, кто любит</p>
+            <div class="envelope__line"></div>
+            <p class="envelope__note">нажми на печать, чтобы открыть</p>
+          </div>
+          <button class="seal" id="openLetter" type="button" aria-label="Д — открыть письмо">
+            <span class="seal__ring"></span>
+            <span class="seal__star">✦</span>
+            <span class="seal__letter">Д</span>
+          </button>
+        </div>
+        <p class="envelope__caption reveal">письмо можно перечитывать сколько угодно раз</p>
+      </div>
+    </section>
+
+    <section class="section section--promises" id="promises" aria-labelledby="promisesTitle">
+      <div class="section__inner">
+        <div class="promises-head">
+          <p class="chapter reveal"><span>06</span> / ПРО НАС ДВОИХ</p>
+          <h2 class="reveal" id="promisesTitle">Я, ты и наше «мы».<br><em>И одна бесконечность.</em></h2>
+          <p class="lead reveal">Я сделал первый шаг и подарил тебе звезду. Но это не монолог: здесь есть место для тебя, для меня и для нашего общего ответа.</p>
+        </div>
+
+        <div class="promise-grid" role="list">
+          <div class="promise-item reveal" role="listitem">
+            <button class="promise-card" type="button" data-promise="0" aria-expanded="false">
+              <span class="promise-card__glow" aria-hidden="true"></span>
+              <span class="promise-card__top"><i>01 · Я</i><b aria-hidden="true">✦</b></span>
+              <span class="promise-card__title">Я буду рядом</span>
+              <span class="promise-card__message">В хорошие дни — смеяться с тобой. В трудные — держать тебя за руку и никуда не уходить.</span>
+              <span class="promise-card__hint">коснись, чтобы открыть</span>
+            </button>
+          </div>
+          <div class="promise-item reveal" role="listitem">
+            <button class="promise-card" type="button" data-promise="1" aria-expanded="false">
+              <span class="promise-card__glow" aria-hidden="true"></span>
+              <span class="promise-card__top"><i>02 · ТЫ</i><b aria-hidden="true">♡</b></span>
+              <span class="promise-card__title">Ты можешь быть собой</span>
+              <span class="promise-card__message">Рядом со мной тебе не нужно быть идеальной. Можно смеяться, молчать, грустить и оставаться настоящей.</span>
+              <span class="promise-card__hint">коснись, чтобы открыть</span>
+            </button>
+          </div>
+          <div class="promise-item reveal" role="listitem">
+            <button class="promise-card" type="button" data-promise="2" aria-expanded="false">
+              <span class="promise-card__glow" aria-hidden="true"></span>
+              <span class="promise-card__top"><i>03 · МЫ</i><b aria-hidden="true">∞</b></span>
+              <span class="promise-card__title">Мы выбираем друг друга</span>
+              <span class="promise-card__message">Не идеально, зато честно: разговаривать, слышать друг друга и снова находить путь к нашему «мы».</span>
+              <span class="promise-card__hint">коснись, чтобы открыть</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="promise-final reveal" id="promiseFinal" aria-live="polite">
+          <div class="promise-final__orbit" aria-hidden="true"><i>✦</i><i>♡</i><i>✦</i></div>
+          <p class="promise-final__label" data-bind-template="{himUpper} ↔ {herUpper}">ДАВРОН ↔ АМАЛЕЧКА</p>
+          <p class="promise-final__text" id="promiseFinalText">Открой все три — и небо запомнит.</p>
+        </div>
+
+        <div class="together-card reveal" id="togetherCard">
+          <span class="together-card__heart" aria-hidden="true">♡</span>
+          <p class="together-card__kicker" data-bind-template="ТЕПЕРЬ ТВОЙ ХОД, {herUpper}">ТЕПЕРЬ ТВОЙ ХОД, АМАЛЕЧКА</p>
+          <h3 id="togetherQuestion">Разделишь со мной это небо?</h3>
+          <p class="together-card__lead">Выбери свой ответ. Здесь теперь говорим мы оба.</p>
+          <div class="together-card__answers" role="group" aria-labelledby="togetherQuestion">
+            <button class="answer-button" type="button" data-answer="stars" aria-pressed="false">Да, под звёзды <span>✦</span></button>
+            <button class="answer-button answer-button--rose" type="button" data-answer="hug" aria-pressed="false">Сначала обними <span>♡</span></button>
+          </div>
+          <p class="together-card__response" id="togetherResponse" aria-live="polite">Я подожду твой ответ здесь.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--gift" id="gift" aria-labelledby="giftTitle">
+      <div class="section__inner">
+        <div class="gift-head">
+          <p class="chapter reveal"><span>07</span> / НАСТОЯЩЕЕ</p>
+          <h2 class="reveal" id="giftTitle">Осталось самое<br><em>настоящее.</em></h2>
+          <p class="lead reveal">Сайт можно закрыть. Билет — нет. Он на одну ночь под настоящими звёздами. Без телефонов. С пледом, какао и мной.</p>
+        </div>
+
+        <div class="ticket-preview reveal" id="ticketPreview">
+          <div class="ticket">
+            <div class="ticket__main">
+              <div class="ticket__top"><span>ADMIT TWO</span><span data-bind="ticket.serial">AMA · 01</span></div>
+              <p class="ticket__kicker">ПРИГЛАСИТЕЛЬНЫЙ БИЛЕТ</p>
+              <h3>Под настоящим<br><em>небом</em></h3>
+              <p class="ticket__sub">одна ночь · без телефонов · только мы</p>
+              <dl class="ticket__details">
+                <div><dt>ДЛЯ</dt><dd data-bind="ticket.for">Амалечки и Даврона</dd></div>
+                <div><dt>МЕСТО</dt><dd data-bind="ticket.place">там, где видно звёзды</dd></div>
+                <div><dt>ДАТА</dt><dd data-bind="ticket.date">когда ты скажешь</dd></div>
+                <div><dt>ВКЛЮЧЕНО</dt><dd data-bind="ticket.included">плед, какао, объятия, одно желание на двоих</dd></div>
+                <div><dt>НЕ ВКЛЮЧЕНО</dt><dd data-bind="ticket.notIncluded">телефон</dd></div>
+              </dl>
+              <p class="ticket__note" data-bind="ticket.note">Предъявлять лично Даврону. Желательно — с объятиями.</p>
+            </div>
+            <div class="ticket__stub">
+              <span class="ticket__stub-top">БЕССРОЧНО</span>
+              <div class="ticket__barcode" aria-hidden="true"></div>
+              <span class="ticket__seat">РЯДОМ<br>СО МНОЙ</span>
+              <span class="ticket__sig">Д.</span>
+            </div>
+          </div>
+          <p class="ticket-preview__caption">билет действителен при предъявлении объятий</p>
+        </div>
+
+        <div class="actions actions--center reveal">
+          <button class="btn btn--gold" type="button" data-download="ticket">
+            <span>Скачать билет</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          </button>
+          <button class="btn btn--text" type="button" data-print="ticket">Распечатать</button>
+          <button class="btn btn--text" type="button" data-open="ticket">Рассмотреть</button>
+        </div>
+
+        <div class="gift-final reveal">
+          <p class="gift-final__small">И самое главное —</p>
+          <p class="gift-final__big">До встречи<br><em>под звёздами.</em></p>
+          <p class="gift-final__love" data-bind-template="Я люблю тебя, {her}.">Я люблю тебя, Амалечка.</p>
+          <p class="gift-final__sign">Твой Даврон</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64"><path d="M32 5l4.8 22.2L59 32l-22.2 4.8L32 59l-4.8-22.2L5 32l22.2-4.8z" fill="currentColor"/></svg>
+      </div>
+      <p class="footer__big">Ты — моя самая яркая звезда.</p>
+      <p class="footer__made">СДЕЛАНО ИЗ ОДНОЙ ЗВЕЗДЫ, СЕМИ ПРИЧИН И БЕСКОНЕЧНОЙ ЛЮБВИ.</p>
+      <div class="footer__meta">
+        <a href="#top">наверх</a>
+        <span>·</span>
+        <button class="footer__link" type="button" id="soundFooter">звук</button>
+        <span>·</span>
+        <button class="footer__link" type="button" id="resetAll">сбросить прогресс</button>
+        <span>·</span>
+        <span>2026</span>
+      </div>
+      <p class="footer__hint">подсказка: набери слово, которым я тебя называю. или нажми на лапку.</p>
+      <button class="paw" id="pawSecret" type="button" aria-label="Открыть секрет">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="15" cy="17" rx="4.2" ry="5.4"/><ellipse cx="24" cy="13" rx="4" ry="5.4"/><ellipse cx="33" cy="17" rx="4.2" ry="5.4"/><path d="M24 23c-6.8 0-11 4.2-11 9 0 4 3 6.4 6.6 6.4 2 0 3.3-.7 4.4-.7s2.4.7 4.4.7C32 38.4 35 36 35 32c0-4.8-4.2-9-11-9Z"/></svg>
+      </button>
+      <p class="footer__copy" data-bind-template="для {herGenitive} · всегда">для Амалечки · всегда</p>
+    </div>
+  </footer>
+
+  <dialog class="letter-dialog" id="letterDialog" aria-labelledby="letterDialogTitle">
+    <div class="letter-paper">
+      <button class="dialog-close" type="button" data-close aria-label="Закрыть письмо">×</button>
+      <p class="chapter"><span>ПИСЬМО</span> / ДЛЯ АМАЛЕЧКИ</p>
+      <h2 id="letterDialogTitle">Тебе.</h2>
+      <div class="letter-body" id="letterBody"></div>
+      <p class="letter-sign" id="letterSign">Твой Даврон.</p>
+      <p class="letter-ps" id="letterPs"></p>
+      <div class="letter-actions">
+        <button class="btn btn--gold" type="button" data-go-gift>Забрать подарок</button>
+        <button class="btn btn--text" type="button" data-close>Закрыть</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="asset-dialog" id="assetDialog" aria-labelledby="assetDialogTitle">
+    <div class="asset-dialog__bar">
+      <p id="assetDialogTitle">Рассмотреть</p>
+      <div class="asset-dialog__tools">
+        <button class="btn btn--text" type="button" id="assetDownload">Скачать</button>
+        <button class="dialog-close dialog-close--light" type="button" data-close aria-label="Закрыть">×</button>
+      </div>
+    </div>
+    <div class="asset-dialog__body" id="assetDialogBody"></div>
+  </dialog>
+
+  <dialog class="secret-dialog" id="secretDialog" aria-labelledby="secretTitle">
+    <button class="dialog-close" type="button" data-close aria-label="Закрыть">×</button>
+    <div class="secret-cat" aria-hidden="true">
+      <svg viewBox="0 0 340 280">
+        <g class="secret-cat__lines" fill="none" stroke="currentColor" stroke-width="1.1" stroke-opacity=".55">
+          <path d="M102 68 140 38 178 64 208 108 160 136 108 112 102 68Z"/>
+          <path d="M118 142 106 218 216 218 226 142"/>
+          <path d="M216 210 268 184 298 120 282 78"/>
+          <path d="M102 68 140 38M178 64 208 108M118 142 108 112M216 218 226 142"/>
+        </g>
+        <g class="secret-cat__stars" fill="#f3dcae">
+          <circle cx="102" cy="68" r="3"/><circle cx="140" cy="38" r="3.6"/><circle cx="178" cy="64" r="3"/>
+          <circle cx="208" cy="108" r="2.8"/><circle cx="160" cy="136" r="2.6"/><circle cx="108" cy="112" r="2.7"/>
+          <circle cx="118" cy="142" r="2.5"/><circle cx="106" cy="218" r="2.7"/><circle cx="216" cy="218" r="2.7"/>
+          <circle cx="226" cy="142" r="2.5"/><circle cx="268" cy="184" r="2.3"/><circle cx="298" cy="120" r="2.1"/>
+          <circle cx="282" cy="78" r="2.4"/>
+          <circle cx="138" cy="94" r="1.7" fill="#f8e4b5"/><circle cx="174" cy="94" r="1.7" fill="#f8e4b5"/>
+          <circle cx="156" cy="110" r="1.4" fill="#e7a6ad"/>
+        </g>
+        <text x="170" y="264" text-anchor="middle" fill="currentColor" font-size="9" letter-spacing="4">КОТЁНОК</text>
+      </svg>
+    </div>
+    <p class="secret-kicker">СЕКРЕТНАЯ ЗВЕЗДА</p>
+    <h2 id="secretTitle" data-bind="secret.word">Мяу.</h2>
+    <p class="secret-line" data-bind="secret.line">Это я. Тихо сижу где-то рядом и люблю тебя.</p>
+    <p class="secret-small" data-bind="secret.small">даже среди звёзд я всегда нахожу тебя первым</p>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="content.js"></script>
+  <script src="assets/media.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
